@@ -2,7 +2,402 @@
 {% extends "layout.html" %}
 
 {% block title %}echo_telegram{% endblock %}
+{% block css %}
+<style>
+    .intro-container{
+        background: linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)), url({{ url_for('static', filename='img/telegram.png') }});
+        background-repeat: no-repeat;
+        background-attachment: scroll;
+        background-position: center center;
+        background-size: cover;
+        text-align: center;
+        height: 700px;
+        color: #fff;
+    }
+    .intro-lead-in{
+        font-size: 40px;
+        font-style: italic;
+        line-height: 40px;
+        margin-bottom: 25px;
+        font-family: 'Droid Serif',-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,'Helvetica Neue',Arial,sans-serif,'Apple Color Emoji','Segoe UI Emoji','Segoe UI Symbol','Noto Color Emoji';
+    }
+    .intro-text{
+        padding: 250px 0px;
+    }
+    .intro-heading{
+        font-size: 100px;
+        font-weight: 700;
+        line-height: 75px;
+        margin-bottom: 50px;
+        font-family: Montserrat,-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,'Helvetica Neue',Arial,sans-serif,'Apple Color Emoji','Segoe UI Emoji','Segoe UI Symbol','Noto Color Emoji';
+    }
+    #start-button{
+
+        background-color: rgb(40,160,294);
+        font-size: 20px;
+        font-weight: 700;
+        width: 150px;
+        height: 70px;
+     }
+     .first-container{
+        text-align: center;
+        margin-top: 70px;
+     }
+     #signup-button{
+        --mdc-theme-primary
+        color: rgb(40,160,294);
+        border-color: rgb(40,160,294);
+        font-size: 20px;
+        font-weight: 700;
+        width: 150px;
+        height: 70px;
+     }
+
+</style>
+{% endblock %}
 
 {% block body %}
-<h1>메인임</h1>
+
+<!--<div class="mdc-text-field">
+  <input type="text" id="my-text-field" class="mdc-text-field__input">
+  <label class="mdc-floating-label" for="my-text-field">Hint text</label>
+  <div class="mdc-line-ripple"></div>
+</div>-->
+<div class="intro-container">
+    <div class="intro-text">
+        <div class="intro-lead-in">welcome!</div>
+        <div class="intro-heading text-uppercase">Echo Telegram</div>
+        <button id="start-button" class="mdc-button mdc-button--raised">시작하기</button>
+    </div>
+</div>
+<div class="first-container">
+    <h2>처음방문</h2>
+    <button id="signup-button"class="mdc-button mdc-button--outlined">회원가입</button>
+</div>
+
+<div id="login-dialog"
+     class="mdc-dialog"
+     role="alertdialog"
+     aria-modal="true"
+     aria-labelledby="my-dialog-title"
+     aria-describedby="my-dialog-content">
+  <div class="mdc-dialog__container">
+    <div class="mdc-dialog__surface">
+      <!-- Title cannot contain leading whitespace due to mdc-typography-baseline-top() -->
+      <h2 class="mdc-dialog__title" id="login-dialog-title"><!--
+     -->로그인<!--
+   --></h2>
+        <!--dialg 내용-->
+      <div class="mdc-dialog__content" id="login-dialog-content">
+          <!--id_field-->
+        <form method="post" action="{{ url_for('login_api.login') }}">
+          <div class="mdc-text-field mdc-text-field--outlined">
+              <input class="mdc-text-field__input" name="login_id">
+              <div class="mdc-notched-outline">
+                <div class="mdc-notched-outline__leading"></div>
+                <div class="mdc-notched-outline__notch">
+                  <label class="mdc-floating-label">ID</label>
+                </div>
+                <div class="mdc-notched-outline__trailing"></div>
+              </div>
+          </div>
+
+
+          <div class="mdc-text-field mdc-text-field--outlined">
+            <input class="mdc-text-field__input" type="password" name="login_pw">
+            <div class="mdc-notched-outline">
+                <div class="mdc-notched-outline__leading"></div>
+                <div class="mdc-notched-outline__notch">
+                    <label class="mdc-floating-label">PW</label>
+                </div>
+            <div class="mdc-notched-outline__trailing"></div>
+            </div>
+          </div>
+        </form>
+      </div>
+      <footer class="mdc-dialog__actions">
+        <button type="button" class="mdc-button mdc-dialog__button" data-mdc-dialog-action="close">
+          <span class="mdc-button__label">취소</span>
+        </button>
+        <button id="login-submit" type="button" class="mdc-button mdc-dialog__button">
+          <span class="mdc-button__label">로그인</span>
+        </button>
+      </footer>
+    </div>
+  </div>
+  <div class="mdc-dialog__scrim"></div>
+</div>
+
+<div id="signup-dialog"
+     class="mdc-dialog"
+     role="alertdialog"
+     aria-modal="true"
+     aria-labelledby="my-dialog-title"
+     aria-describedby="my-dialog-content">
+  <div class="mdc-dialog__container">
+    <div class="mdc-dialog__surface">
+      <!-- Title cannot contain leading whitespace due to mdc-typography-baseline-top() -->
+      <h2 class="mdc-dialog__title" id="my-dialog-title"><!--
+     -->회원가입<!--
+   --></h2>
+        <!--dialg 내용-->
+      <div class="mdc-dialog__content" id="my-dialog-content">
+          <!--id_field-->
+        <form method="post" action="{{ url_for('signup_api.sign_up') }}">
+          <div class="mdc-text-field mdc-text-field--outlined">
+              <input class="mdc-text-field__input" name="signup_id">
+              <div class="mdc-notched-outline">
+                <div class="mdc-notched-outline__leading"></div>
+                <div class="mdc-notched-outline__notch">
+                  <label class="mdc-floating-label">ID</label>
+                </div>
+                <div class="mdc-notched-outline__trailing"></div>
+              </div>
+          </div>
+
+
+          <div class="mdc-text-field mdc-text-field--outlined">
+            <input class="mdc-text-field__input" type="password" name="signup_pw">
+            <div class="mdc-notched-outline">
+                <div class="mdc-notched-outline__leading"></div>
+                <div class="mdc-notched-outline__notch">
+                    <label class="mdc-floating-label">PW</label>
+                </div>
+            <div class="mdc-notched-outline__trailing"></div>
+            </div>
+          </div>
+          <div class="mdc-text-field mdc-text-field--outlined">
+            <input class="mdc-text-field__input" type="password" name="signup_pw_check">
+            <div class="mdc-notched-outline">
+                <div class="mdc-notched-outline__leading"></div>
+                <div class="mdc-notched-outline__notch">
+                    <label class="mdc-floating-label">PW_CHECK</label>
+                </div>
+            <div class="mdc-notched-outline__trailing"></div>
+            </div>
+          </div>
+          <div class="mdc-text-field mdc-text-field--outlined">
+            <input class="mdc-text-field__input" name="signup_name">
+            <div class="mdc-notched-outline">
+                <div class="mdc-notched-outline__leading"></div>
+                <div class="mdc-notched-outline__notch">
+                    <label class="mdc-floating-label">Name</label>
+                </div>
+            <div class="mdc-notched-outline__trailing"></div>
+            </div>
+          </div>
+          <!--Rank-->
+          <div class="mdc-select demo-width-class mdc-select--outlined ">
+              <input type="hidden" name="signup_rank">
+              <i class="mdc-select__dropdown-icon"></i>
+
+              <div id="demo-selected-text" class="mdc-select__selected-text" role="button" aria-haspopup="listbox" aria-labelledby="demo-label demo-selected-text">Vegetables</div>
+              <div class="mdc-select__menu mdc-menu mdc-menu-surface demo-width-class" role="listbox">
+                <ul class="mdc-list">
+                  <li class="mdc-list-item mdc-list-item--selected" data-value="" role="option"></li>
+                  <li class="mdc-list-item" data-value="7" role="option">
+                    실장
+                  </li>
+                  <li class="mdc-list-item" data-value="6" role="option">
+                    팀장
+                  </li>
+                  <li class="mdc-list-item" data-value="5" role="option">
+                    부장
+                  </li>
+                  <li class="mdc-list-item" data-value="4" role="option">
+                    차장
+                  </li>
+                  <li class="mdc-list-item" data-value="3" role="option">
+                    과장
+                  </li>
+                  <li class="mdc-list-item" data-value="2" role="option">
+                    대리
+                  </li>
+                  <li class="mdc-list-item" data-value="1" role="option">
+                    사원
+                  </li>
+                </ul>
+              </div>
+
+              <div class="mdc-notched-outline">
+                  <div class="mdc-notched-outline__leading"></div>
+                  <div class="mdc-notched-outline__notch">
+                      <label class="mdc-floating-label">Rank</label>
+                  </div>
+              <div class="mdc-notched-outline__trailing"></div>
+              </div>
+          </div>
+        </form>
+      </div>
+      <footer class="mdc-dialog__actions">
+        <button type="button" class="mdc-button mdc-dialog__button" data-mdc-dialog-action="close">
+          <span class="mdc-button__label">취소</span>
+        </button>
+        <button id="sign-up-submit" type="button" class="mdc-button mdc-dialog__button">
+          <span class="mdc-button__label">제출</span>
+        </button>
+      </footer>
+    </div>
+  </div>
+  <div class="mdc-dialog__scrim"></div>
+</div>
+
+{% endblock %}
+
+{% block script %}
+<script>
+$(function(){
+    //회원가입 유효성검사 관련 변수 및 상수
+    dupleCheck = false;
+    pwCheck = false;
+    korNamePattern = /^[가-힣]{2,5}$/;
+    rankPattern = /(1|2|3|4|5|6|7)/;
+
+    //mdc event 관련 상수
+    const MDCRipple = mdc.ripple.MDCRipple;
+    const MDCDialog = mdc.dialog.MDCDialog;
+    const MDCFormField = mdc.formField.MDCFormField;
+    const MDCTextField = mdc.textField.MDCTextField;
+    const MDCSelect = mdc.select.MDCSelect;
+
+    //회원가입 유효성 검사
+    function signup_validation(){
+        if(dupleCheck && pwCheck){
+            //이름, 직급
+            toCheck_name = $('#signup-dialog input[name="signup_name"]').val();
+            toCheck_rank = $('#signup-dialog input[name="signup_rank"]').val();
+            if(toCheck_name !== '' && korNamePattern.test(toCheck_name) && rankPattern.test(Number(toCheck_rank))){
+                return true;
+            }
+            else{
+                return false;
+            }
+        }
+    }
+
+    //login dialog설정
+    loginDialog = document.querySelector('#login-dialog');
+    loginDialogMDC = new MDCDialog(loginDialog);
+
+    //signup dialog 설정
+    signupDialog = document.querySelector('#signup-dialog');
+    signupDialogMDC = new MDCDialog(signupDialog);
+
+
+    //start button 설정
+    startButton = document.querySelector('#start-button');
+    startButtonRipple = new MDCRipple(startButton);
+    startButton.addEventListener('click',function(event){
+        loginDialogMDC.open();
+    });
+
+    //login textfield 설정
+    loginTextFields = [].map.call(document.querySelectorAll('#login-dialog .mdc-text-field'), function(el) {
+      return new MDCTextField(el);
+    });
+
+    //login dialog 내부 요소들 이벤트 재설정
+    loginDialogMDC.listen('MDCDialog:opened', () => {
+        loginTextFields.forEach(function(element){
+            element.layout();
+        });
+    });
+
+    //login submit click
+    $('#login-submit').on('click',function(event){
+        toCheck_id = $('#login-dialog input[name="login_id"]').val();
+        toCheck_pw = $('#login-dialog input[name="login_pw"]').val();
+        if (toCheck_id !== '' && toCheck_pw !== ''){
+            $('#login-dialog form').submit();
+        }
+        else{
+            alert('입력정보를 다시 확인해주세요');
+        }
+
+    });
+
+    //signup button 설정
+    signupButton = document.querySelector('#signup-button');
+    signupButtonRipple = new MDCRipple(signupButton);
+    signupButton.addEventListener('click',function(event){
+        signupDialogMDC.open();
+    });
+
+    //회원가입 textfield 설정
+    signupTextFields = [].map.call(document.querySelectorAll('#signup-dialog .mdc-text-field'), function(el) {
+      return new MDCTextField(el);
+    });
+
+    // 직급 selectbox 설정
+    rankSelectMDC = new MDCSelect(document.querySelector('#signup-dialog .mdc-select'));
+    rankSelectMDC.listen('MDCSelect:change', () => {
+
+    });
+
+    //signup dialog 내부 요소들 이벤트 재설정
+    signupDialogMDC.listen('MDCDialog:opened', () => {
+        signupTextFields.forEach(function(element){
+            element.layout();
+        });
+        rankSelectMDC.layout();
+    });
+
+    $('#sign-up-submit').on('click',function(event){
+        if (signup_validation()){
+            $('#signup-dialog form').submit();
+            alert('회원가입 성공');
+        }
+        else{
+            alert('입력정보를 다시 확인해주세요');
+        }
+
+    });
+
+    $('#signup-dialog input[name="signup_id"]').on('focusout',function(){
+        var toCheck_id =  $(this).val();
+        if (toCheck_id != '') {
+        $.ajax({
+        	url         : '{{ url_for("signup_api.check_id") }}'
+           ,type        : 'POST'
+           ,cache       : false
+           ,data        : JSON.stringify({
+        	   user_id: toCheck_id
+             })
+           ,contentType : 'application/json; charset=utf-8'
+           ,dataType    : 'json'
+           ,success     : function(data) {
+        	   user_id = toCheck_id
+        	   if (data.result) {
+                   dupleCheck = true;
+        	   } else {
+        	       dupleCheck = false;
+        	       alert('이미 존재하는 ID입니다');
+        	   }
+             }
+           ,error: function(result) {
+        	   alert('통신에 오류가 발생했습니다. 잠시 후에 다시 사용하세요.');
+               dupleCheck = false;
+           }
+        });
+
+      } else {
+    	  alert('사용자명을 넣어주세요.', function() {
+              $(this).focus();
+              dupleCheck = false;
+    	  });
+      }
+    });
+
+    //회원가입 비밀번호 확인 체크
+     $('#signup-dialog input[name="signup_pw_check"]').on('focusout',function(){
+        toCheck_pw_check = $(this).val();
+        toCheck_pw = $('#signup-dialog input[name="signup_pw"]').val();
+        if(toCheck_pw_check != '' && toCheck_pw != ''){
+            pwCheck = toCheck_pw_check === toCheck_pw ? true : false;
+        }
+     });
+
+})
+</script>
+
 {% endblock %}

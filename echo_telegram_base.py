@@ -1,18 +1,22 @@
 # -*- coding:utf-8 -*-
 
-import sys
+import sys, os
 from flask.app import Flask
 from app_logger import logger
 from flask_session import Session
 from functools import wraps
-from flask.globals import g
+from flask.globals import g, request
+from datetime import datetime, timedelta
 
 reload(sys)
 sys.setdefaultencoding("utf-8")
 
+
 #flask 앱 생성
 app = Flask(__name__)
+
 logger.info("app 생성----------")
+
 
 # 환경설정 파일들 경로 설정
 from echo_telegram_conf import EchoTelegramConfig
@@ -34,6 +38,9 @@ db_info = app.config['DB_USER']+':'+app.config['DB_PASSWD']+'@'+app.config['DB_H
 app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql://' + db_info
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 session = Session(app)
+
+# session 유지 시간설정
+app.permanent_session_lifetime = timedelta(minutes=10)
 
 # session 관리를 위한 테이블 자동생성
 session.app.session_interface.db.create_all()
@@ -57,10 +64,19 @@ db_url = 'mysql+pymysql://' + db_info
 dao = EchoTelegramDB(db_url)
 logger.info(">>> DB connection : %s" % (str(dao)))
 
+
 # blueprint 등록
 from views.main import main_view
+from views.dashboard import dashboard_view
+from api.signup import signup_api
+from api.login import login_api
 
 app.register_blueprint(main_view)
+app.register_blueprint(dashboard_view)
+app.register_blueprint(signup_api)
+app.register_blueprint(login_api)
+
+# 로그인 페이지 엔드포인트
 
 logger.info(">>> Blueprint setting. ")
 logger.info("===========================================================")
