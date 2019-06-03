@@ -5,8 +5,8 @@ from flask.globals import request, g
 from flask.helpers import flash, url_for
 from flask import redirect, jsonify
 from werkzeug.security import generate_password_hash
-from echo_telegram.echo_telegram_base import try_except, dao
-from echo_telegram.app_logger import logger
+from ..echo_telegram_base import try_except, dao
+from ..app_logger import logger
 
 signup_api = Blueprint("signup_api", __name__)
 

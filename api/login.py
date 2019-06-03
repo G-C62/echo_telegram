@@ -4,10 +4,10 @@ from flask.blueprints import Blueprint
 from flask import url_for, redirect
 from werkzeug.security import check_password_hash
 from flask.globals import request, g
-from echo_telegram.echo_telegram_base import try_except, dao, app
-from echo_telegram.app_logger import logger
-from echo_telegram.api.signup import __get_user
-from echo_telegram.db.user import User
+from ..echo_telegram_base import try_except, dao, app
+from ..app_logger import logger
+from ..api.signup import __get_user
+from ..db.user import User
 from flask import session
 from flask_login.utils import login_user
 
