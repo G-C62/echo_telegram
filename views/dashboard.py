@@ -11,5 +11,6 @@ dashboard_view = Blueprint("dashboard_view", __name__)
 
 
 @dashboard_view.route('/dashboard/<user_id>')
+@login_required
 def dashboard(user_id):
     return render_template('dashboard.html', user_id=user_id)

@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 
 
+
 class User:
     def __init__(self, userId, name, rank, status, channel, auth=False):
         self.userId = userId
@@ -39,6 +40,5 @@ class User:
         - user_loader 콜백 메소드에서 사용자 ID를 얻을 때 사용할 수도 있다.
         '''
         return self.userId
-
 
 
