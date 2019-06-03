@@ -58,11 +58,6 @@
 
 {% block body %}
 
-<!--<div class="mdc-text-field">
-  <input type="text" id="my-text-field" class="mdc-text-field__input">
-  <label class="mdc-floating-label" for="my-text-field">Hint text</label>
-  <div class="mdc-line-ripple"></div>
-</div>-->
 <div class="intro-container">
     <div class="intro-text">
         <div class="intro-lead-in">welcome!</div>
@@ -253,13 +248,6 @@ $(function(){
     korNamePattern = /^[가-힣]{2,5}$/;
     rankPattern = /(1|2|3|4|5|6|7)/;
 
-    //mdc event 관련 상수
-    const MDCRipple = mdc.ripple.MDCRipple;
-    const MDCDialog = mdc.dialog.MDCDialog;
-    const MDCFormField = mdc.formField.MDCFormField;
-    const MDCTextField = mdc.textField.MDCTextField;
-    const MDCSelect = mdc.select.MDCSelect;
-
     //회원가입 유효성 검사
     function signup_validation(){
         if(dupleCheck && pwCheck){
@@ -288,7 +276,11 @@ $(function(){
     startButton = document.querySelector('#start-button');
     startButtonRipple = new MDCRipple(startButton);
     startButton.addEventListener('click',function(event){
-        loginDialogMDC.open();
+        {% if current_user.is_authenticated %}
+            location.href = '{{ url_for("dashboard_view.dashboard") }}';
+        {% else %}
+            loginDialogMDC.open();
+        {% endif %}
     });
 
     //login textfield 설정

@@ -96,11 +96,13 @@ from api.login import login_api
 from views.main  import main_view
 from views.dashboard import dashboard_view
 from api.signup import signup_api
+from api.register_channel import register_channel_api
 
 app.register_blueprint(login_api)
 app.register_blueprint(main_view)
 app.register_blueprint(dashboard_view)
 app.register_blueprint(signup_api)
+app.register_blueprint(register_channel_api)
 
 # 로그인 페이지 엔드포인트
 

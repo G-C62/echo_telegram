@@ -20,7 +20,7 @@ class User:
             'channel': self.channel,
             'authenticated': self.authenticated,
         }
-        return None
+        return str(r)
 
     def is_authenticated(self):
         '''user객체가 인증되었다면 True를 반환'''

@@ -1,0 +1,38 @@
+<style>
+    .menu_header{
+        background: #fff;
+        height: 54px;
+        display: flex;
+        vertical-align: middle;
+        line-height: 50px;
+    }
+    #header_logout{
+        width:150px;
+        text-align: center;
+    }
+    #header_user{
+        flex: auto;
+        text-align: right;
+    }
+    #header_logout button{
+        line-height: initial;
+        background: #b00020;
+    }
+</style>
+<script>
+    $(function(){
+        //logout button 설정
+        logoutButton = document.querySelector('#header_logout button');
+        logoutButtonRipple = new MDCRipple(logoutButton);
+        logoutButton.addEventListener('click',function(event){
+            location.href = '{{ url_for("login_api.logout") }}'
+        });
+    })
+
+</script>
+<div class="menu_header">
+    <div id="header_user">{{ current_user.userId }}</div>
+    <div id="header_logout">
+        <button class="mdc-button mdc-button--raised">로그아웃</button>
+    </div>
+</div>

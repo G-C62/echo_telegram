@@ -3,7 +3,54 @@
 {% block title %}dash_board{% endblock %}
 
 {% block body %}
-<div > </div>
-<h1>어서오셈 {{ user_id }}님</h1>
+<style>
+    .wrap{
+        display: flex;
+    }
+    .container{
+        background:   rgb(240, 241, 248);
+        height: -webkit-fill-available;
+    }
+    .menu_body{
+        flex: auto;
+    }
+    .add_wrap{
+        text-align: center;
+        margin: 0 auto;
+        padding-top: 10%;
+    }
+    .add_wrap > button{
+        width: 150px;
+        font-size: 140px;
+    }
+    .add_wrap > div{
+        font-size: 30px;
+        font-weight: 800;
+    }
+</style>
+<script>
+    $(function(){
+        //추가하기 버튼
+        addChannelButton = document.querySelector('.add_wrap > button');
+        addChannelButton.addEventListener('click',function(event){
+            channel_id = prompt('등록을 원하는 채팅 채널 ID를 입력해주세요');
+            register_url = '{{ url_for("register_channel_api.register_channel") }}' + '?channel=' + channel_id;
+            location.href = register_url;
+        });
+    })
+</script>
+<div class="wrap">
+    {% include "menu_sidebar.html" %}
+    <div class="menu_body">
+        {% include "menu_header.html" %}
+        <div class="container">
+            <div class="add_wrap">
+                <div>채널을 등록해주세요</div>
+                <button class="mdc-icon-button material-icons mdc-ripple-upgraded--unbounded mdc-ripple-upgraded" aria-label="Add to favorites" >add_circle_outline</button>
+            </div>
+        </div>
+    </div>
+</div>
+
 
 {% endblock %}
