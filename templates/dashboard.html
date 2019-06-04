@@ -9,7 +9,7 @@
     }
     .container{
         background:   rgb(240, 241, 248);
-        height: -webkit-fill-available;
+        height: 94vh;
     }
     .menu_body{
         flex: auto;
@@ -27,16 +27,50 @@
         font-size: 30px;
         font-weight: 800;
     }
+    #seat-grid{
+        background: red;
+    }
+    .row{
+        display: flex;
+    }
+    .row > .col{
+        height: 15.3vh;
+        flex: 1;
+        border: 2px red solid;
+        background: gray;
+    }
 </style>
 <script>
     $(function(){
         //추가하기 버튼
         addChannelButton = document.querySelector('.add_wrap > button');
-        addChannelButton.addEventListener('click',function(event){
-            channel_id = prompt('등록을 원하는 채팅 채널 ID를 입력해주세요');
-            register_url = '{{ url_for("register_channel_api.register_channel") }}' + '?channel=' + channel_id;
-            location.href = register_url;
+        if(addChannelButton){
+            addChannelButton.addEventListener('click',function(event){
+                channel_id = prompt('등록을 원하는 채팅 채널 ID를 입력해주세요');
+                register_url = '{{ url_for("register_channel_api.register_channel") }}' + '?channel=' + channel_id;
+                location.href = register_url;
+            });
+        }
+
+        //그리드 클릭 이벤트
+        $('.row > .col').on('click', function(){
+            click_location = $(this).attr('id');
+            user_location = '{{ current_user.location }}';
+            if(user_location === 'None'){
+                var result = confirm('선택하신 좌표('+click_location+')를 자리로 하시겠습니까?')
+                if(result){
+                    location.href = '{{ url_for('user_api.update_location') }}' + '?location=' + click_location;
+                }
+            }
+            else{
+                var result = confirm('좌석을 ('+click_location+') 으로 이동 하시겠습니까?');
+                if(result){
+                    location.href = '{{ url_for('user_api.update_location') }}' + '?location=' + click_location;
+                }
+
+            }
         });
+
     })
 </script>
 <div class="wrap">
@@ -44,10 +78,45 @@
     <div class="menu_body">
         {% include "menu_header.html" %}
         <div class="container">
+        {% if current_user.channel %}
+            <div id="seat-grid">
+                <div class="row">
+                    {% for  i in range(1,11) %}
+                    <div id="1-{{ i }}" class="col"></div>
+                    {% endfor %}
+                </div>
+                <div class="row">
+                    {% for  i in range(1,11) %}
+                    <div id="2-{{ i }}" class="col"></div>
+                    {% endfor %}
+                </div>
+                <div class="row">
+                    {% for  i in range(1,11) %}
+                    <div id="3-{{ i }}" class="col"></div>
+                    {% endfor %}
+                </div>
+                <div class="row">
+                    {% for  i in range(1,11) %}
+                    <div id="4-{{ i }}" class="col"></div>
+                    {% endfor %}
+                </div>
+                <div class="row">
+                    {% for  i in range(1,11) %}
+                    <div id="5-{{ i }}" class="col"></div>
+                    {% endfor %}
+                </div>
+                <div class="row">
+                    {% for  i in range(1,11) %}
+                    <div id="6-{{ i }}" class="col"></div>
+                    {% endfor %}
+                </div>
+            </div>
+        {% else %}
             <div class="add_wrap">
                 <div>채널을 등록해주세요</div>
                 <button class="mdc-icon-button material-icons mdc-ripple-upgraded--unbounded mdc-ripple-upgraded" aria-label="Add to favorites" >add_circle_outline</button>
             </div>
+        {% endif %}
         </div>
     </div>
 </div>

@@ -3,12 +3,13 @@
 
 
 class User:
-    def __init__(self, userId, name, rank, status, channel, auth=False):
+    def __init__(self, userId, name, rank, status, channel, location, auth=False):
         self.userId = userId
         self.name = name
         self.rank = rank
         self.status = status
         self.channel = channel
+        self.location = location
         self.authenticated = auth
 
     def __repr__(self):
@@ -18,6 +19,7 @@ class User:
             'rank': self.rank,
             'status': self.status,
             'channel': self.channel,
+            'location': self.location,
             'authenticated': self.authenticated,
         }
         return str(r)

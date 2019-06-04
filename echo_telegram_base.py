@@ -81,14 +81,14 @@ from db.user import User
 @login_manager.user_loader
 @try_except
 def load_user(userId):
-    query = 'select user_id, name, rank, status, channel_id from users where user_id = %s'
+    query = 'select user_id, name, rank, status, channel_id, seat_location from users where user_id = %s'
     cursor = dao.get_conn().cursor()
     cursor.execute(query, [userId])
     current_user = cursor.fetchone()
     cursor.close()
     g.conn.commit()
     user = User(userId=current_user[0], name=current_user[1], rank=current_user[2], status=current_user[3],
-                channel=current_user[4], auth=False)
+                channel=current_user[4], location=current_user[5], auth=False)
     return user
 
 # blueprint 등록
@@ -97,12 +97,14 @@ from views.main  import main_view
 from views.dashboard import dashboard_view
 from api.signup import signup_api
 from api.register_channel import register_channel_api
+from api.user import user_api
 
 app.register_blueprint(login_api)
 app.register_blueprint(main_view)
 app.register_blueprint(dashboard_view)
 app.register_blueprint(signup_api)
 app.register_blueprint(register_channel_api)
+app.register_blueprint(user_api, url_prefix='/user')
 
 # 로그인 페이지 엔드포인트
 

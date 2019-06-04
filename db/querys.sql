@@ -11,6 +11,7 @@ name varchar(20) not null,
 rank int(1) check (rank in(1,2,3,4,5,6,7)),
 status varchar(40) check (status in('place', 'meeting', 'away', 'outside')),
 channel_id int(10),
+seat_location varchar(10) unique,
 primary key(id),
 foreign key(channel_id) references channels(id)
 );

@@ -3,6 +3,8 @@
         background: rgb(40,160,294);
         width: 224px;
         color: #fff;
+        height: 100vh;
+        +
     }
     #sidebar_title{
         font-size: 26px;
@@ -33,7 +35,7 @@
         <ul id="sidebar_list">
             {% if current_user.channel %}
                 <li>
-                    채널명과 기능들 뿌려주기
+                    {{ events[0][11] }} 채널 입니다.
                 </li>
             {% else %}
                 <li>

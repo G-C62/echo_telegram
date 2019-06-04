@@ -35,7 +35,8 @@ def login():
 
     if user:
         if check_pw(user[0], login_pw):
-            user = User(userId=user[1].decode('utf-8'), name=user[2].decode('utf-8'), rank=user[3], status=None, channel=None, auth=False)
+            user = User(userId=user[1].decode('utf-8'), name=user[2].decode('utf-8'), rank=user[3], status=None\
+                        , channel=None, location=None, auth=False)
             login_user(user)
             session['userId'] = login_userId
             return redirect(url_for('dashboard_view.dashboard'))
