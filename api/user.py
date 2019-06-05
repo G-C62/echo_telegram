@@ -22,3 +22,21 @@ def update_location():
         g.conn.commit()
 
     return redirect(url_for('dashboard_view.dashboard'))
+
+
+@user_api.route('/update/return')
+def return_seat():
+    # status 수정
+    print current_user.status
+    if (current_user.status is not None) and (current_user.status != 'place'):
+        cursor = dao.get_conn().cursor()
+        cursor.execute('''update users set status = 'place' where user_id = %s;''',
+                       [current_user.userId])
+     #events의 iscompolete 수정
+        cursor.execute('''update events set iscomplete = 1 where user_id = (select id from users where user_id = %s) 
+                        and iscomplete = 0;''',
+                       [current_user.userId])
+        cursor.close()
+        g.conn.commit()
+
+    return redirect(url_for('dashboard_view.dashboard'))

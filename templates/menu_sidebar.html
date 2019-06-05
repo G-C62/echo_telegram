@@ -4,7 +4,6 @@
         width: 224px;
         color: #fff;
         height: 100vh;
-        +
     }
     #sidebar_title{
         font-size: 26px;
@@ -18,12 +17,36 @@
         width: 200px;
         opacity: 0.4;
     }
+    #sidebar_list{
+        padding: 0;
+        list-style-type: none;
+        text-align: center;
+    }
+    .list_title{
+        font-size: 23px;
+        font-weight: 500;
+        margin-bottom: 30px;
+    }
+    .list-contents{
+        padding: 10px;
+        font-weight: 600;
+        font-size: 17px;
+    }
+    .list-contents:hover{
+        cursor: pointer;
+        background : #fff;
+        color: rgb(40,160,294);
+    }
+    #return-button{
+        background: #fff;
+    }
 </style>
 <script>
     $(function(){
         $('#sidebar_title').on('click',function(){
             location.href = '{{ url_for("dashboard_view.dashboard") }}';
         });
+
     })
 </script>
 <div class="menu_sidebar">
@@ -34,13 +57,36 @@
     <div id="sidebar_body">
         <ul id="sidebar_list">
             {% if current_user.channel %}
-                <li>
-                    {{ events[0][11] }} 채널 입니다.
+                <li class="list_title">
+                    {{ events[0]['channel_name'] }} 채널 입니다.
                 </li>
-            {% else %}
-                <li>
-                    등록된 채널이 없습니다.
+                <li class="list-contents">
+                    회의
                 </li>
+                <li class="list-contents">
+                    자리비움
+                </li>
+                <li class="list-contents">
+                    외근
+                </li>
+                <li class="list-contents">
+                    공지
+                </li>
+                {% if current_user.status != None and current_user.status != 'place' %}
+                <script>
+                    $(function(){
+                        returnButton = document.querySelector('#return-button');
+                        returnButtonRipple = new MDCRipple(returnButton);
+                        returnButton.addEventListener('click',function(event){
+                            location.href = '{{ url_for("user_api.return_seat") }}';
+                         });
+                    })
+                </script>
+                <li id="place-button">
+                    <button id="return-button"class="mdc-button mdc-button--outlined">자리로 돌아오기</button>
+                </li>
+                {% endif %}
+
             {% endif %}
         </ul>
     </div>

@@ -190,25 +190,25 @@
               <div class="mdc-select__menu mdc-menu mdc-menu-surface demo-width-class" role="listbox">
                 <ul class="mdc-list">
                   <li class="mdc-list-item mdc-list-item--selected" data-value="" role="option"></li>
-                  <li class="mdc-list-item" data-value="7" role="option">
+                  <li class="mdc-list-item" data-value="실장" role="option">
                     실장
                   </li>
-                  <li class="mdc-list-item" data-value="6" role="option">
+                  <li class="mdc-list-item" data-value="팀장" role="option">
                     팀장
                   </li>
-                  <li class="mdc-list-item" data-value="5" role="option">
+                  <li class="mdc-list-item" data-value="부장" role="option">
                     부장
                   </li>
-                  <li class="mdc-list-item" data-value="4" role="option">
+                  <li class="mdc-list-item" data-value="차장" role="option">
                     차장
                   </li>
-                  <li class="mdc-list-item" data-value="3" role="option">
+                  <li class="mdc-list-item" data-value="과장" role="option">
                     과장
                   </li>
-                  <li class="mdc-list-item" data-value="2" role="option">
+                  <li class="mdc-list-item" data-value="대리" role="option">
                     대리
                   </li>
-                  <li class="mdc-list-item" data-value="1" role="option">
+                  <li class="mdc-list-item" data-value="사원" role="option">
                     사원
                   </li>
                 </ul>
@@ -246,7 +246,6 @@ $(function(){
     dupleCheck = false;
     pwCheck = false;
     korNamePattern = /^[가-힣]{2,5}$/;
-    rankPattern = /(1|2|3|4|5|6|7)/;
 
     //회원가입 유효성 검사
     function signup_validation(){
@@ -254,7 +253,7 @@ $(function(){
             //이름, 직급
             toCheck_name = $('#signup-dialog input[name="signup_name"]').val();
             toCheck_rank = $('#signup-dialog input[name="signup_rank"]').val();
-            if(toCheck_name !== '' && korNamePattern.test(toCheck_name) && rankPattern.test(Number(toCheck_rank))){
+            if(toCheck_name !== '' && korNamePattern.test(toCheck_name)){
                 return true;
             }
             else{

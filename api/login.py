@@ -10,7 +10,7 @@ from app_logger import logger
 from api.signup import __get_user
 from db.user import User
 from flask import session
-from flask_login.utils import login_user, login_required, logout_user
+from flask_login.utils import login_user, login_required, logout_user, current_user
 
 
 
@@ -23,6 +23,9 @@ def check_pw(login_id, pw):
     cursor = dao.get_conn().cursor()
     cursor.execute(query, [login_id])
     db_pw = cursor.fetchone()
+    cursor.close()
+    g.conn.commit()
+
     return check_password_hash(db_pw[0], pw)
 
 
@@ -48,5 +51,9 @@ def login():
 @login_api.route('/logout')
 @login_required
 def logout():
+    cursor = dao.get_conn().cursor()
+    cursor.execute('''update users set status = %s where user_id = %s''', ['logout', current_user.userId])
+    cursor.close()
+    g.conn.commit()
     logout_user()
     return redirect(url_for('main_view.index'))

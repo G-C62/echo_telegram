@@ -32,7 +32,7 @@ def dashboard():
     events = [dict((cursor.description[idx][0], value)
                   for idx, value in enumerate(row)) for row in cursor.fetchall()]
 
-    print events[0]
+    #print events[0]['category']
     return render_template('dashboard.html', events=events)
 
 

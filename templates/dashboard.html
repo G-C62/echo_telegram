@@ -8,7 +8,7 @@
         display: flex;
     }
     .container{
-        background:   rgb(240, 241, 248);
+        background: rgb(240, 241, 248);
         height: 94vh;
     }
     .menu_body{
@@ -28,7 +28,6 @@
         font-weight: 800;
     }
     #seat-grid{
-        background: red;
     }
     .row{
         display: flex;
@@ -36,12 +35,62 @@
     .row > .col{
         height: 15.3vh;
         flex: 1;
-        border: 2px red solid;
-        background: gray;
+        position: relative;
+        color: #fff;
+        font-weight: bold;
+        font-size: 20px;
+        border: solid 1.5px #fff;
+    }
+    .row > .col:hover{
+        cursor: pointer;
+        background: rgb(40,160,294);
+        opacity: 0.3;
+    }
+    .view-mode{
+
+    }
+    .place-box{
+        background: #1cc88a;
+    }
+    .empty-box{
+        background: #f6c23e;
+    }
+    .logout-box{
+        background: #858796
+    }
+    .name-wrap{
+        display: inline-block;
+        text-align: right;
+        width: 100%;
+        position: absolute;
+        bottom: 10px
+    }
+    .user-name, .user-rank{
+        display: inline-block;
     }
 </style>
 <script>
+    //javascript에 객체 추가
+    eventsArray = new Array();
+    {% for event in events if events %}
+    var eventInfo = new Object();
+    eventInfo.user_id = '{{ event["user_id"] }}';
+    eventInfo.rank = '{{ event["rank"] }}';
+    eventInfo.status = '{{ event["status"] }}';
+    eventInfo.name = '{{ event["name"] }}';
+    eventInfo.location = '{{ event["seat_location"] }}';
+    eventInfo.category = '{{ event["category"] }}';
+    eventInfo.place = '{{ event["place"] }}';
+    eventInfo.subject = '{{ event["subject"] }}';
+    eventInfo.start_time = '{{ event["start_time"] }}';
+    eventInfo.attendants = '{{ event["attendants"] }}';
+
+    eventsArray.push(eventInfo);
+    {% endfor %}
+
     $(function(){
+    var user_location = '';
+
         //추가하기 버튼
         addChannelButton = document.querySelector('.add_wrap > button');
         if(addChannelButton){
@@ -55,8 +104,24 @@
         //그리드 클릭 이벤트
         $('.row > .col').on('click', function(){
             click_location = $(this).attr('id');
+            click_status = $(this).find('div.user-status').text().trim();
             user_location = '{{ current_user.location }}';
-            if(user_location === 'None'){
+            if(click_status != ''){
+                //디테일 이벤트
+                for(var index in eventsArray){
+                    if(eventsArray[index].location === click_location){
+                        alert(
+                        '현재상태 : ' + eventsArray[index].status + '\n' +
+                        '이름 : ' + eventsArray[index].name + '\n' +
+                        '장소 : ' + eventsArray[index].place + '\n' +
+                        '주제 : ' + eventsArray[index].subject + '\n' +
+                        '시작시간 : ' + eventsArray[index].start_time + '\n' +
+                        '참석자 : ' + eventsArray[index].attendants
+                        );
+                    }
+                }
+            }
+            else if(user_location === 'None'){
                 var result = confirm('선택하신 좌표('+click_location+')를 자리로 하시겠습니까?')
                 if(result){
                     location.href = '{{ url_for('user_api.update_location') }}' + '?location=' + click_location;
@@ -67,9 +132,57 @@
                 if(result){
                     location.href = '{{ url_for('user_api.update_location') }}' + '?location=' + click_location;
                 }
-
             }
         });
+
+        //events, user 정보 읽어오기
+        {% for event in events if events %}
+        // 유저좌표
+        user_location_id = '{{ event['seat_location'] }}';
+
+        // 유저status
+        var className;
+        var status_kor;
+        user_status = '{{ event["status"] }}'
+        switch (user_status) {
+          case 'logout':
+            className = 'logout-box';
+            status_kor = '로그아웃';
+            break;
+          case 'place':
+          case 'None':
+            className = 'place-box';
+            status_kor = '자리에 있음';
+            break;
+          case 'meeting':
+            status_kor = '회의';
+            className = 'empty-box';
+            break;
+          case 'away':
+            status_kor = '자리비움';
+            className = 'empty-box';
+            break;
+          case 'outside':
+            status_kor = '외근';
+            className = 'empty-box';
+            break;
+          default:
+            console.log('뭔지 모르겠음다');
+            break;
+        }
+
+        if(user_location_id !== 'None'){
+            user_location_id = '#' + user_location_id;
+            user_location_dom = $(user_location_id);
+            user_location_dom.addClass(className);
+            user_location_dom.children('.user-status').text(status_kor);
+            user_location_dom.find('div.user-name').text('{{ event["name"] }}');
+            user_location_dom.find('div.user-rank').text('{{ event["rank"] }}');
+        }
+
+        {% endfor %}
+
+
 
     })
 </script>
@@ -80,36 +193,20 @@
         <div class="container">
         {% if current_user.channel %}
             <div id="seat-grid">
+                {% for j in range(1,7) %}
                 <div class="row">
                     {% for  i in range(1,11) %}
-                    <div id="1-{{ i }}" class="col"></div>
+                    <div id="{{ j }}-{{ i }}" class="col">
+                        <div class="user-status">
+                        </div>
+                        <div class="name-wrap">
+                            <div class="user-name"></div>
+                            <div class="user-rank"></div>
+                        </div>
+                    </div>
                     {% endfor %}
                 </div>
-                <div class="row">
-                    {% for  i in range(1,11) %}
-                    <div id="2-{{ i }}" class="col"></div>
-                    {% endfor %}
-                </div>
-                <div class="row">
-                    {% for  i in range(1,11) %}
-                    <div id="3-{{ i }}" class="col"></div>
-                    {% endfor %}
-                </div>
-                <div class="row">
-                    {% for  i in range(1,11) %}
-                    <div id="4-{{ i }}" class="col"></div>
-                    {% endfor %}
-                </div>
-                <div class="row">
-                    {% for  i in range(1,11) %}
-                    <div id="5-{{ i }}" class="col"></div>
-                    {% endfor %}
-                </div>
-                <div class="row">
-                    {% for  i in range(1,11) %}
-                    <div id="6-{{ i }}" class="col"></div>
-                    {% endfor %}
-                </div>
+                {% endfor %}
             </div>
         {% else %}
             <div class="add_wrap">
