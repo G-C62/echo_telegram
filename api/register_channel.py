@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 from flask_login import login_required, current_user
 from flask import redirect, url_for, Blueprint, request, g
-from echo_telegram.echo_telegram_base import dao
+from echo_telegram_base import dao
 
 register_channel_api = Blueprint("register_channel_api", __name__)
 

@@ -8,4 +8,4 @@ MarkupSafe==1.1.1
 mysqlclient==1.3.4
 PyMySQL==0.9.3
 SQLAlchemy==1.3.3
-Werkzeug==0.15.4
+Werkz:qeug==0.15.4
