@@ -32,6 +32,9 @@ def dashboard():
     events = [dict((cursor.description[idx][0], value)
                   for idx, value in enumerate(row)) for row in cursor.fetchall()]
 
+    print 'flask_login : ' + current_user.status
+    print events[1]['name']
+    print 'db : ' + events[1]['status']
     #print events[0]['category']
     return render_template('dashboard.html', events=events)
 

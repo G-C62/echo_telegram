@@ -1,3 +1,5 @@
+<link rel='stylesheet' type='text/css' href="{{ url_for('static', filename='css/timepicki.css') }}">
+<script type='text/javascript' src="{{ url_for('static', filename='js/timepicki.js') }}"></script>
 <style>
     .menu_sidebar{
         background: rgb(40,160,294);
@@ -47,6 +49,77 @@
             location.href = '{{ url_for("dashboard_view.dashboard") }}';
         });
 
+
+        //dialog 생성
+        eventDialog = document.querySelector('#event-dialog');
+        eventDialogMDC = new MDCDialog(eventDialog);
+
+
+        //event textfield 설정
+        eventTextFields = [].map.call(document.querySelectorAll('#event-dialog .mdc-text-field'), function(el){
+            return new MDCTextField(el);
+        });
+
+        //event dialog 내부 요소들 이벤트 재설정
+        eventDialogMDC.listen('MDCDialog:opened', () => {
+            eventTextFields.forEach(function(element){
+                element.layout();
+            });
+        });
+
+        //event생성 버튼과 dialog연결
+        $('.list-contents').each(function(index, item){
+            var eventDialogElement = $('#events-dialog');
+            var eventDialogTitle = $('#events-dialog-title');
+            var category = $('#event-category');
+
+            $(item).on('click', function(){
+                //click된 li element의 class
+                var className = $(this).attr('class').split(" ");
+                category.val(className[1]);
+
+                //display 초기화
+                $('#events-dialog-content > form > div:nth-child(2)').css('display', 'inline-flex');
+                $('#events-dialog-content > form > div:nth-child(3)').css('display', 'inline-flex');
+                $('#events-dialog-content > form > div:nth-child(4)').css('display', 'inline-flex');
+                $('#events-dialog-content > form > div:nth-child(5)').css('display', 'inline-flex');
+
+                switch (className[1]) {
+                    case 'meeting':
+                        //dialog 제목 수정
+                        eventDialogTitle.text('회의');
+                    break;
+                    case 'away':
+                        eventDialogTitle.text('자리비움');
+                        $('#events-dialog-content > form > div:nth-child(2)').css('display', 'none');
+                        $('#events-dialog-content > form > div:nth-child(4)').css('display', 'none');
+                        $('#events-dialog-content > form > div:nth-child(3) label').text('사유');
+                    break;
+                    case 'outside':
+                        eventDialogTitle.text('외근');
+                        $('#events-dialog-content > form > div:nth-child(2)').css('display', 'none');
+                        $('#events-dialog-content > form > div:nth-child(4)').css('display', 'none');
+                    break;
+                    case 'notice':
+                        eventDialogTitle.text('공지');
+                        $('#events-dialog-content > form > div:nth-child(2)').css('display', 'none');
+                        $('#events-dialog-content > form > div:nth-child(5)').css('display', 'none');
+                        $('#events-dialog-content > form > div:nth-child(3)').css('display', 'none');
+                        $('#events-dialog-content > form > div:nth-child(4) label').text('내용');
+                    break;
+                    }
+
+                eventDialogMDC.open();
+            });
+        });
+
+        //timepicker
+        $('#timepicker').timepicki();
+
+        //이벤트 제출
+        $('#event-submit').on('click',function(){
+            $('#event-dialog form').submit();
+        });
     })
 </script>
 <div class="menu_sidebar">
@@ -60,16 +133,16 @@
                 <li class="list_title">
                     {{ events[0]['channel_name'] }} 채널 입니다.
                 </li>
-                <li class="list-contents">
+                <li class="list-contents meeting">
                     회의
                 </li>
-                <li class="list-contents">
+                <li class="list-contents away">
                     자리비움
                 </li>
-                <li class="list-contents">
+                <li class="list-contents outside">
                     외근
                 </li>
-                <li class="list-contents">
+                <li class="list-contents notice">
                     공지
                 </li>
                 {% if current_user.status != None and current_user.status != 'place' %}
@@ -90,4 +163,82 @@
             {% endif %}
         </ul>
     </div>
+</div>
+
+<!--events dialog-->
+<div id="event-dialog"
+     class="mdc-dialog"
+     role="alertdialog"
+     aria-modal="true"
+     aria-labelledby="my-dialog-title"
+     aria-describedby="my-dialog-content">
+  <div class="mdc-dialog__container">
+    <div class="mdc-dialog__surface">
+      <!-- Title cannot contain leading whitespace due to mdc-typography-baseline-top() -->
+      <h2 class="mdc-dialog__title" id="events-dialog-title"><!--
+     -->이벤트 생성<!--
+   --></h2>
+        <!--dialg 내용-->
+      <div class="mdc-dialog__content" id="events-dialog-content">
+          <!--id_field-->
+        <form method="post" action="{{ url_for('echo_api.create_event') }}">
+          <hidden id="event-category" name="event_category"></hidden>
+          <div class="mdc-text-field mdc-text-field--outlined">
+              <input class="mdc-text-field__input" name="event_location">
+              <div class="mdc-notched-outline">
+                <div class="mdc-notched-outline__leading"></div>
+                <div class="mdc-notched-outline__notch">
+                  <label class="mdc-floating-label">장소</label>
+                </div>
+                <div class="mdc-notched-outline__trailing"></div>
+              </div>
+          </div>
+
+
+          <div class="mdc-text-field mdc-text-field--outlined">
+            <input class="mdc-text-field__input" name="event_subject">
+            <div class="mdc-notched-outline">
+                <div class="mdc-notched-outline__leading"></div>
+                <div class="mdc-notched-outline__notch">
+                    <label class="mdc-floating-label">주제</label>
+                </div>
+            <div class="mdc-notched-outline__trailing"></div>
+            </div>
+          </div>
+
+          <div class="mdc-text-field mdc-text-field--outlined mdc-text-field--textarea">
+              <textarea class="mdc-text-field__input" name="event_attendants"></textarea>
+            <div class="mdc-notched-outline">
+                <div class="mdc-notched-outline__leading"></div>
+                <div class="mdc-notched-outline__notch">
+                    <label class="mdc-floating-label">참석자</label>
+                </div>
+            <div class="mdc-notched-outline__trailing"></div>
+            </div>
+          </div>
+
+            <div class="mdc-text-field mdc-text-field--outlined">
+            <input id="timepicker" class="mdc-text-field__input" name="event_start">
+            <div class="mdc-notched-outline">
+                <div class="mdc-notched-outline__leading"></div>
+                <div class="mdc-notched-outline__notch">
+                    <label class="mdc-floating-label">시작시간</label>
+                </div>
+            <div class="mdc-notched-outline__trailing"></div>
+            </div>
+          </div>
+
+        </form>
+      </div>
+      <footer class="mdc-dialog__actions">
+        <button type="button" class="mdc-button mdc-dialog__button" data-mdc-dialog-action="close">
+          <span class="mdc-button__label">취소</span>
+        </button>
+        <button id="event-submit" type="button" class="mdc-button mdc-dialog__button">
+          <span class="mdc-button__label">생성</span>
+        </button>
+      </footer>
+    </div>
+  </div>
+  <div class="mdc-dialog__scrim"></div>
 </div>

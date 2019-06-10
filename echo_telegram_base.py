@@ -98,6 +98,7 @@ from views.dashboard import dashboard_view
 from api.signup import signup_api
 from api.register_channel import register_channel_api
 from api.user import user_api
+from api.echo import echo_api
 
 app.register_blueprint(login_api)
 app.register_blueprint(main_view)
@@ -105,6 +106,7 @@ app.register_blueprint(dashboard_view)
 app.register_blueprint(signup_api)
 app.register_blueprint(register_channel_api)
 app.register_blueprint(user_api, url_prefix='/user')
+app.register_blueprint(echo_api)
 
 # 로그인 페이지 엔드포인트
 

@@ -145,10 +145,6 @@
         var status_kor;
         user_status = '{{ event["status"] }}'
         switch (user_status) {
-          case 'logout':
-            className = 'logout-box';
-            status_kor = '로그아웃';
-            break;
           case 'place':
           case 'None':
             className = 'place-box';
@@ -167,7 +163,8 @@
             className = 'empty-box';
             break;
           default:
-            console.log('뭔지 모르겠음다');
+            className = 'place-box';
+            status_kor = '자리에 있음';
             break;
         }
 

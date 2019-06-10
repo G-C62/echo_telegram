@@ -38,7 +38,7 @@ def login():
 
     if user:
         if check_pw(user[0], login_pw):
-            user = User(userId=user[1].decode('utf-8'), name=user[2].decode('utf-8'), rank=user[3], status=None\
+            user = User(userId=user[1].decode('utf-8'), name=user[2].decode('utf-8'), rank=user[3], status='place'\
                         , channel=None, location=None, auth=False)
             login_user(user)
             session['userId'] = login_userId
@@ -51,9 +51,5 @@ def login():
 @login_api.route('/logout')
 @login_required
 def logout():
-    cursor = dao.get_conn().cursor()
-    cursor.execute('''update users set status = %s where user_id = %s''', ['logout', current_user.userId])
-    cursor.close()
-    g.conn.commit()
     logout_user()
     return redirect(url_for('main_view.index'))
