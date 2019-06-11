@@ -42,6 +42,9 @@
     #return-button{
         background: #fff;
     }
+    textarea[name='event_attendants']{
+        height: 200px !important;
+    }
 </style>
 <script>
     $(function(){
@@ -88,6 +91,8 @@
                     case 'meeting':
                         //dialog 제목 수정
                         eventDialogTitle.text('회의');
+                        $('#events-dialog-content > form > div:nth-child(3) label').text('주제');
+                        $('#events-dialog-content > form > div:nth-child(4) label').text('참석자');
                     break;
                     case 'away':
                         eventDialogTitle.text('자리비움');
@@ -97,6 +102,7 @@
                     break;
                     case 'outside':
                         eventDialogTitle.text('외근');
+                        $('#events-dialog-content > form > div:nth-child(3) label').text('주제');
                         $('#events-dialog-content > form > div:nth-child(2)').css('display', 'none');
                         $('#events-dialog-content > form > div:nth-child(4)').css('display', 'none');
                     break;
@@ -182,7 +188,7 @@
       <div class="mdc-dialog__content" id="events-dialog-content">
           <!--id_field-->
         <form method="post" action="{{ url_for('echo_api.create_event') }}">
-          <hidden id="event-category" name="event_category"></hidden>
+          <input type="hidden" id="event-category" name="event_category">
           <div class="mdc-text-field mdc-text-field--outlined">
               <input class="mdc-text-field__input" name="event_location">
               <div class="mdc-notched-outline">
@@ -228,6 +234,7 @@
             </div>
           </div>
 
+          <input type="hidden" name="event_channel" value="{{ events[0]['channel_name'] }}">
         </form>
       </div>
       <footer class="mdc-dialog__actions">
