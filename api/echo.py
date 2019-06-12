@@ -2,19 +2,31 @@
 
 
 from flask.blueprints import Blueprint
-from flask import url_for, redirect, request, g
-from echo_telegram_base import dao, try_except
-from flask_login import current_user
+from flask import url_for, redirect, request, g, current_app
+from echo_telegram_base import dao, try_except, app
+from flask_login import current_user, login_required
 import telegram
-from telegram.utils.request import Request
+import schedule
+import datetime
+import time
+from threading import Thread
 
 echo_api = Blueprint("echo_api", __name__)
 
+def start_event(category, name):
+    # 참석자 및 등록한 사람 status 변경
+    with app.app_context():
+        insert_name = name if name != None else current_user.name
+        cursor = dao.get_conn().cursor()
+        cursor.execute('''update users set status = %s where name = %s;''', [category, insert_name])
 
+    return schedule.CancelJob
 
 @echo_api.route('/echo', methods=['POST'])
 @try_except
+@login_required
 def create_event():
+
     #telegram bot 생성
     channel = request.form['event_channel'].encode("utf-8") if 'event_channel' in request.form else ''
     chat_id = '@' + channel
@@ -43,25 +55,25 @@ def create_event():
                     values(%s, %s, %s, %s, %s, (select id from users where user_id = %s), %s)'''
         cursor.execute(query, [category, location, subject, start, current_user.channel, current_user.userId, attendants])
         bot.sendMessage(chat_id=chat_id, text='---- 회의 -----\n' +
-                                              '장소: ' + location + '\n' +
-                                              '주제: ' + subject + '\n' +
-                                              '참석자: ' + attendants + '\n' +
-                                              '시작시간: ' + start + '\n' +
-                                              '** 작성자  :' + current_user.name)  # 메세지를 보냅니다.
+                                               '장소: ' + location + '\n' +
+                                               '주제: ' + subject + '\n' +
+                                               '참석자: ' + attendants + '\n' +
+                                               '시작시간: ' + start + '\n' +
+                                               '** 작성자  :' + current_user.name)  # 메세지를 보냅니다.
     elif category == 'away' or category == 'outside':
         query = '''insert into events(category, subject, start_time, channel_id, user_id) 
                             values(%s, %s, %s, %s, (select id from users where user_id = %s))'''
         cursor.execute(query, [category, subject, start, current_user.channel, current_user.userId])
         if category == 'away':
             bot.sendMessage(chat_id=chat_id, text='---- 자리비움 -----\n' +
-                                              '사유: ' + subject + '\n' +
-                                              '시작시간: ' + start + '\n' +
-                                              '** 작성자  :' + current_user.name)  # 메세지를 보냅니다.
+                                               '사유: ' + subject + '\n' +
+                                               '시작시간: ' + start + '\n' +
+                                               '** 작성자  :' + current_user.name)  # 메세지를 보냅니다.
         else:
             bot.sendMessage(chat_id=chat_id, text='---- 외근 -----\n' +
-                                                  '주제: ' + subject + '\n' +
-                                                  '시작시간: ' + start + '\n' +
-                                                  '** 작성자  :' + current_user.name)  # 메세지를 보냅니다.
+                                                   '주제: ' + subject + '\n' +
+                                                   '시작시간: ' + start + '\n' +
+                                                   '** 작성자  :' + current_user.name)  # 메세지를 보냅니다.
     elif category == 'notice':
         query = '''insert into events(category, channel_id, user_id, attendants) 
                             values(%s, %s, (select id from users where user_id = %s), %s)'''
@@ -69,6 +81,7 @@ def create_event():
         bot.sendMessage(chat_id=chat_id, text='---- 공지 -----\n' +
                                               '내용: ' + attendants + '\n' +
                                               '** 작성자  :' + current_user.name)  # 메세지를 보냅니다.
+        return redirect(url_for('dashboard_view.dashboard'))
     else:
         return redirect(url_for('dashboard_view.dashboard'))
 
@@ -76,4 +89,31 @@ def create_event():
     g.conn.commit()
 
     #schedule 걸어서 해당 시간되면 참석자 및 작성자 status변화 시키기
+    # 1. 현재시간보다 이전 시간인 경우
+    now = datetime.datetime.now()
+    start_datetime = now.replace(hour=int(start[0:2]), minute=int(start[3:5]))
+    if now > start_datetime:
+        if category == 'meeting':
+            # 공백 또는 , 로 분할하여 리스트로만듦
+            attendants_list = attendants.replace(' ', '').split(',') if ',' in attendants else attendants.split(' ')
+            # 참석자 수만큼 돌려서 update
+            for i in range(len(attendants_list)):
+                start_event(category, attendants_list[i])
+
+        start_event(category, current_user.name)
+
+    # 2. 현재시간 이후인 경우
+    else:
+        if category == 'meeting':
+            # 공백 또는 , 로 분할하여 리스트로만듦
+            attendants_list = attendants.replace(' ', '').split(',') if ',' in attendants else attendants.split(' ')
+            # 참석자 수만큼 돌려서 update
+            for i in range(len(attendants_list)):
+                schedule.every().day.at(start[0:5]).do(start_event, category=category, name=attendants_list[i])
+
+        schedule.every().day.at(start[0:5]).do(start_event, category=category, name=current_user.name)
+
+    cursor.close()
+    g.conn.commit()
+
     return redirect(url_for('dashboard_view.dashboard'))

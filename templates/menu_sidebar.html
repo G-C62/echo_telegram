@@ -233,8 +233,9 @@
             <div class="mdc-notched-outline__trailing"></div>
             </div>
           </div>
-
+            {% if current_user.channel %}
           <input type="hidden" name="event_channel" value="{{ events[0]['channel_name'] }}">
+            {% endif %}
         </form>
       </div>
       <footer class="mdc-dialog__actions">
