@@ -42,6 +42,9 @@ def create_event():
     start =  request.form['event_start'].encode("utf-8") if 'event_start' in request.form else ''
     query = ''
 
+    print type(attendants)
+    print attendants
+
     #start가 pm이면 12시간 더해주기
     if 'PM' in start:
         hour = str(int(start[0:2])+12)
@@ -54,33 +57,35 @@ def create_event():
         query = '''insert into events(category, place, subject, start_time, channel_id, user_id, attendants) 
                     values(%s, %s, %s, %s, %s, (select id from users where user_id = %s), %s)'''
         cursor.execute(query, [category, location, subject, start, current_user.channel, current_user.userId, attendants])
-        bot.sendMessage(chat_id=chat_id, text='---- 회의 -----\n' +
-                                               '장소: ' + location + '\n' +
-                                               '주제: ' + subject + '\n' +
-                                               '참석자: ' + attendants + '\n' +
-                                               '시작시간: ' + start + '\n' +
-                                               '** 작성자  :' + current_user.name)  # 메세지를 보냅니다.
+        # bot.sendMessage(chat_id=chat_id, text='---- 회의 -----\n' +
+        #                                        '장소: ' + location + '\n' +
+        #                                        '주제: ' + subject + '\n' +
+        #                                        '참석자: ' + attendants + '\n' +
+        #                                        '시작시간: ' + start + '\n' +
+        #                                        '** 작성자  :' + current_user.name)  # 메세지를 보냅니다.
     elif category == 'away' or category == 'outside':
         query = '''insert into events(category, subject, start_time, channel_id, user_id) 
                             values(%s, %s, %s, %s, (select id from users where user_id = %s))'''
         cursor.execute(query, [category, subject, start, current_user.channel, current_user.userId])
         if category == 'away':
-            bot.sendMessage(chat_id=chat_id, text='---- 자리비움 -----\n' +
-                                               '사유: ' + subject + '\n' +
-                                               '시작시간: ' + start + '\n' +
-                                               '** 작성자  :' + current_user.name)  # 메세지를 보냅니다.
+            pass
+            # bot.sendMessage(chat_id=chat_id, text='---- 자리비움 -----\n' +
+            #                                    '사유: ' + subject + '\n' +
+            #                                    '시작시간: ' + start + '\n' +
+            #                                    '** 작성자  :' + current_user.name)  # 메세지를 보냅니다.
         else:
-            bot.sendMessage(chat_id=chat_id, text='---- 외근 -----\n' +
-                                                   '주제: ' + subject + '\n' +
-                                                   '시작시간: ' + start + '\n' +
-                                                   '** 작성자  :' + current_user.name)  # 메세지를 보냅니다.
+            pass
+            # bot.sendMessage(chat_id=chat_id, text='---- 외근 -----\n' +
+            #                                        '주제: ' + subject + '\n' +
+            #                                        '시작시간: ' + start + '\n' +
+            #                                        '** 작성자  :' + current_user.name)  # 메세지를 보냅니다.
     elif category == 'notice':
-        query = '''insert into events(category, channel_id, user_id, attendants) 
-                            values(%s, %s, (select id from users where user_id = %s), %s)'''
+        query = '''insert into events(category, channel_id, user_id, attendants, iscomplete) 
+                            values(%s, %s, (select id from users where user_id = %s), %s, 1)'''
         cursor.execute(query, [category, current_user.channel, current_user.userId, attendants])
-        bot.sendMessage(chat_id=chat_id, text='---- 공지 -----\n' +
-                                              '내용: ' + attendants + '\n' +
-                                              '** 작성자  :' + current_user.name)  # 메세지를 보냅니다.
+        # bot.sendMessage(chat_id=chat_id, text='---- 공지 -----\n' +
+        #                                       '내용: ' + attendants + '\n' +
+        #                                       '** 작성자  :' + current_user.name)  # 메세지를 보냅니다.
         return redirect(url_for('dashboard_view.dashboard'))
     else:
         return redirect(url_for('dashboard_view.dashboard'))

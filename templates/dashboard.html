@@ -68,8 +68,20 @@
     .user-name, .user-rank{
         display: inline-block;
     }
+    .info-content, .info-tag{
+        display: inline-block;
+    }
+    .info-tag{
+        width: 70px;
+        color: rgb(40,160,294)
+    }
+    .info-content{
+        font-weight: 900;
+    }
 </style>
 <script>
+
+
     //javascript에 객체 추가
     eventsArray = new Array();
     {% for event in events if events %}
@@ -89,8 +101,10 @@
     {% endfor %}
 
     $(function(){
-    var user_location = '';
-
+        var user_location = '';
+        //dialog 생성
+        infoDialog = document.querySelector('#info-dialog');
+        infoDialogMDC = new MDCDialog(infoDialog);
         //추가하기 버튼
         addChannelButton = document.querySelector('.add_wrap > button');
         if(addChannelButton){
@@ -108,16 +122,59 @@
             user_location = '{{ current_user.location }}';
             if(click_status != ''){
                 //디테일 이벤트
-                for(var index in eventsArray){
-                    if(eventsArray[index].location === click_location){
-                        alert(
-                        '현재상태 : ' + eventsArray[index].status + '\n' +
-                        '이름 : ' + eventsArray[index].name + '\n' +
-                        '장소 : ' + eventsArray[index].place + '\n' +
-                        '주제 : ' + eventsArray[index].subject + '\n' +
-                        '시작시간 : ' + eventsArray[index].start_time + '\n' +
-                        '참석자 : ' + eventsArray[index].attendants
-                        );
+                console.log(click_status)
+                if(click_status == '자리에 있음'){
+                    alert('자리에 잘 계십니다 ^^7');
+                }
+                else{
+                    // 이벤트를 돌면서 해당 이벤트의 좌표와 클릭된 이벤의 좌표가 같을 경우 상태 출력
+                    for(var index in eventsArray){
+                        if(eventsArray[index].location === click_location){
+                            info_status = eventsArray[index].status == 'meeting' ? '회의'
+                                : (eventsArray[index].status == 'away'? '자리비움' : '외근' )
+                            info_name = eventsArray[index].name
+                            info_place = eventsArray[index].place
+                            info_subject = eventsArray[index].subject
+                            info_start = eventsArray[index].start_time
+                            info_attendants = eventsArray[index].attendants
+
+                            //dialog title
+                            $('#info-dialog-title').text(info_name + '님은 ' + info_status + ' 중 이십니다');
+
+                            $('#info-content-wrap > div:nth-child(n)').css('display', 'block');
+
+                            //dialog info
+                            if(info_place == 'None'){
+                                $('#info-content-wrap > div:nth-child(1)').css('display', 'none')
+                            }
+                            else{
+                                $('#info-content-wrap > div:nth-child(1) .info-content').text(info_place);
+                            }
+
+                            if(info_subject == 'None'){
+                                $('#info-content-wrap > div:nth-child(2)').css('display', 'none')
+                            }
+                            else{
+                                $('#info-content-wrap > div:nth-child(2) .info-content').text(info_subject);
+                            }
+
+                            if(info_attendants == 'None'){
+                                $('#info-content-wrap > div:nth-child(3)').css('display', 'none')
+                            }
+                            else{
+                                $('#info-content-wrap > div:nth-child(3) .info-content').text(info_attendants);
+                            }
+
+                            if(info_start == 'None'){
+                                $('#info-content-wrap > div:nth-child(4)').css('display', 'none')
+                            }
+                            else{
+                                $('#info-content-wrap > div:nth-child(4) .info-content').text(info_start);
+                            }
+
+
+                            infoDialogMDC.open();
+                        }
                     }
                 }
             }
@@ -215,5 +272,48 @@
     </div>
 </div>
 
+<!--info dialog-->
+<div id="info-dialog"
+     class="mdc-dialog"
+     role="alertdialog"
+     aria-modal="true"
+     aria-labelledby="my-dialog-title"
+     aria-describedby="my-dialog-content">
+  <div class="mdc-dialog__container">
+    <div class="mdc-dialog__surface">
+      <!-- Title cannot contain leading whitespace due to mdc-typography-baseline-top() -->
+      <h2 class="mdc-dialog__title" id="info-dialog-title"><!--
+     -->정보 조회<!--
+   --></h2>
+        <!--dialg 내용-->
+      <div class="mdc-dialog__content" id="info-dialog-content">
+        <div id="info-content-wrap">
+            <div class="info-content-rows">
+                <div class="info-tag">장소</div>
+                <div class="info-content"></div>
+            </div>
+            <div class="info-content-rows">
+                <div class="info-tag">주제</div>
+                <div class="info-content"></div>
+            </div>
+            <div class="info-content-rows">
+                <div class="info-tag">참석자</div>
+                <div class="info-content"></div>
+            </div>
+            <div class="info-content-rows">
+                <div class="info-tag">시작시간</div>
+                <div class="info-content"></div>
+            </div>
+        </div>
+      </div>
+      <footer class="mdc-dialog__actions">
+        <button type="button" class="mdc-button mdc-dialog__button" data-mdc-dialog-action="close">
+          <span class="mdc-button__label">취소</span>
+        </button>
+      </footer>
+    </div>
+  </div>
+  <div class="mdc-dialog__scrim"></div>
+</div>
 
 {% endblock %}

@@ -65,7 +65,7 @@ with app.app_context():
     session = Session(app)
 
     # session 유지 시간설정
-    app.permanent_session_lifetime = timedelta(minutes=10)
+    app.permanent_session_lifetime = timedelta(days=31)
 
     # session 관리를 위한 테이블 자동생성
     session.app.session_interface.db.create_all()

@@ -124,6 +124,8 @@
 
         //이벤트 제출
         $('#event-submit').on('click',function(){
+            attendants_text = $('#event-dialog textarea').val()
+
             $('#event-dialog form').submit();
         });
     })

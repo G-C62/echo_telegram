@@ -26,13 +26,18 @@ def dashboard():
                     from users left join channels
                     on users.channel_id = channels.id
                     left join events 
-                    on users.id = events.user_id
+                    on users.id = events.user_id 
                     and iscomplete = 0
                     where users.channel_id = %s;
                     ''', [current_user.channel])
     events = [dict((cursor.description[idx][0], value)
                   for idx, value in enumerate(row)) for row in cursor.fetchall()]
 
+    for event in events:
+        if event['attendants'] is not None:
+
+            attendants_text = event['attendants'].replace('\r\n', '<br>')
+            event['attendants'] = attendants_text
 
     return render_template('dashboard.html', events=events)
 

@@ -4,13 +4,14 @@ from flask.blueprints import Blueprint
 from flask.globals import request, g
 from flask.helpers import flash, url_for
 from flask import redirect, jsonify
-from flask_login import current_user
+from flask_login import current_user, login_required
 from echo_telegram_base import try_except, dao
 from app_logger import logger
 
 user_api = Blueprint("user_api", __name__)
 
 @user_api.route('/update/location')
+@login_required
 def update_location():
     user_location = request.args.get("location").encode("utf-8")
     # db에 가서 user정보 변경
@@ -25,6 +26,7 @@ def update_location():
 
 
 @user_api.route('/update/return')
+@login_required
 def return_seat():
     # status 수정
     print current_user.status
