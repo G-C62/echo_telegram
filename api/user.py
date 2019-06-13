@@ -29,7 +29,6 @@ def update_location():
 @login_required
 def return_seat():
     # status 수정
-    print current_user.status
     if (current_user.status is not None) and (current_user.status != 'place'):
         cursor = dao.get_conn().cursor()
         cursor.execute('''update users set status = 'place' where user_id = %s;''',

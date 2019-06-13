@@ -3,12 +3,14 @@
 from flask.blueprints import Blueprint
 from flask.globals import request, g
 from flask.helpers import flash, url_for
-from flask import redirect, jsonify
+from flask import redirect, jsonify, flash
 from werkzeug.security import generate_password_hash
 from echo_telegram_base import try_except, dao
 from app_logger import logger
 
 signup_api = Blueprint("signup_api", __name__)
+
+rank_list = ['실장', '팀장', '부장', '차장', '과장', '대리' ,'사원']
 
 # user_id에 해당하는 계정이 있는지 확인하는 method
 @try_except
@@ -16,7 +18,6 @@ def __get_user(user_id):
     logger.info('search_user_by id : '+user_id)
     query = '''select id, user_id, name, rank from users where user_id = %s'''
     cursor = dao.get_conn().cursor()
-    #cursor.execute('set names utf8')
     cursor.execute(query, [user_id])
     current_user = cursor.fetchone()
     cursor.close()
@@ -33,15 +34,18 @@ def sign_up():
     name = request.values.get("signup_name").encode("utf-8") if "signup_name" in request.values else ''
     rank = request.values.get("signup_rank").encode("utf-8") if "signup_rank" in request.values else ''
 
+    if rank not in rank_list:
+        flash('그런 직급은 없습니다 돌아가세요')
+        return redirect(url_for('main_view.index'))
 
     logger.info('register_action data : ' + id + ', ' + name + ', ' + rank)
     hashed_pw = generate_password_hash(pw, salt_length=10)
     cursor = dao.get_conn().cursor()
-    #cursor.execute('set names utf8')
     cursor.execute('''insert into users(user_id, pw, name, rank) values(%s, %s, %s, %s)''', [id, hashed_pw, name, rank])
     cursor.close()
     g.conn.commit()
 
+    flash('회원가입 성공')
     return redirect(url_for('main_view.index'))
 
 

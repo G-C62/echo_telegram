@@ -241,6 +241,12 @@
 
 {% block script %}
 <script>
+ //flash 메시지 alert발생
+    {% with lists = get_flashed_messages() %}
+        {% for list in lists if lists%}
+            alert('{{ list.decode("utf-8") }}');
+        {% endfor %}
+    {% endwith %}
 $(function(){
     //회원가입 유효성검사 관련 변수 및 상수
     dupleCheck = false;
@@ -336,7 +342,6 @@ $(function(){
     $('#sign-up-submit').on('click',function(event){
         if (signup_validation()){
             $('#signup-dialog form').submit();
-            alert('회원가입 성공');
         }
         else{
             alert('입력정보를 다시 확인해주세요');

@@ -47,6 +47,12 @@
     }
 </style>
 <script>
+    //flash 메시지 alert발생
+    {% with lists = get_flashed_messages() %}
+        {% for list in lists if lists%}
+            alert('{{ list.decode("utf-8") }}');
+        {% endfor %}
+    {% endwith %}
     $(function(){
         $('#sidebar_title').on('click',function(){
             location.href = '{{ url_for("dashboard_view.dashboard") }}';
@@ -80,6 +86,15 @@
                 //click된 li element의 class
                 var className = $(this).attr('class').split(" ");
                 category.val(className[1]);
+
+                //현재 user의 status가 place도 아니고 None도 아니면 이벤트 생성 불가(notice 제외)
+                {% if current_user.status != 'place' and current_user.status is not none %}
+                    if(!$(this).hasClass('notice')){
+                        //notice가 아닌 이벤트들인경우
+                        alert('자리로 돌아온 후 다시 시도해주세요');
+                        return;
+                    }
+                {% endif %}
 
                 //display 초기화
                 $('#events-dialog-content > form > div:nth-child(2)').css('display', 'inline-flex');
@@ -124,8 +139,6 @@
 
         //이벤트 제출
         $('#event-submit').on('click',function(){
-            attendants_text = $('#event-dialog textarea').val()
-
             $('#event-dialog form').submit();
         });
     })
@@ -139,7 +152,7 @@
         <ul id="sidebar_list">
             {% if current_user.channel %}
                 <li class="list_title">
-                    {{ events[0]['channel_name'] }} 채널 입니다.
+                    {{ events[0]['channel_name'] }} 채널
                 </li>
                 <li class="list-contents meeting">
                     회의

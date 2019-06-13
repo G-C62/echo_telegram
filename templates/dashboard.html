@@ -80,7 +80,7 @@
     }
 </style>
 <script>
-
+    setTimeout("location.reload()",60000);
 
     //javascript에 객체 추가
     eventsArray = new Array();
@@ -96,6 +96,7 @@
     eventInfo.subject = '{{ event["subject"] }}';
     eventInfo.start_time = '{{ event["start_time"] }}';
     eventInfo.attendants = '{{ event["attendants"] }}';
+    eventInfo.attendants = eventInfo.attendants.replace('||', '<br>');
 
     eventsArray.push(eventInfo);
     {% endfor %}

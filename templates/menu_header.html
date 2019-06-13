@@ -18,6 +18,10 @@
         line-height: initial;
         background: #b00020;
     }
+    .menu_header .info-button{
+        height: initial;
+        margin-left: 2px;
+    }
 </style>
 <script>
     $(function(){
@@ -27,10 +31,29 @@
         logoutButton.addEventListener('click',function(event){
             location.href = '{{ url_for("login_api.logout") }}'
         });
+
+        //info button 설정
+        infoButton = document.querySelector('.info-button');
+        infoButtonRipple = new MDCRipple(infoButton);
+        infoButton.addEventListener('click', function(event){
+             info_str = '=====   echo - telegram 사용설명   ===== \n\n' +
+                        '1. telegram 채팅그룹을 Group Type 을 Public으로 바꾸어 주세요 \n\n' +
+                        '2. Public 설정화면에서 t.me/ 뒤에 오는 부분이 채널 이름입니다 \n\n' +
+                        '3. 채널 이름을 설정해주세요 \n\n' +
+                        '4. 그룹 멤버에 @C62Bot 을 추가해주세요';
+              alert(info_str);
+
+        });
     })
 
 </script>
 <div class="menu_header">
+    <div>
+        <button class="mdc-button info-button">
+          <i class="material-icons mdc-button__icon" aria-hidden="true">info</i>
+          <span class="mdc-button__label">도움말</span>
+        </button>
+    </div>
     <div id="header_user">{{ current_user.userId }}</div>
     <div id="header_logout">
         <button class="mdc-button mdc-button--raised">로그아웃</button>

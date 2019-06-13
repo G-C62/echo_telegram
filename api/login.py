@@ -10,7 +10,7 @@ from app_logger import logger
 from api.signup import __get_user
 from db.user import User
 from flask import session
-from flask_login.utils import login_user, login_required, logout_user, current_user
+from flask_login.utils import login_user, login_required, logout_user
 
 
 
