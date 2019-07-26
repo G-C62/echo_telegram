@@ -32,10 +32,6 @@ app = Flask(__name__)
 
 with app.app_context():
 
-    # schedule 쓰레드 생성
-    # t = Thread(target=run_schedule, args=(app))
-    # t.daemon = True
-    # t.start()
 
 
     logger.info("app 생성----------")

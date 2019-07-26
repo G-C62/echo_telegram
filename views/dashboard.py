@@ -2,16 +2,18 @@
 
 
 from flask.blueprints import Blueprint
-from flask import render_template
+from flask import render_template, request, jsonify
 from echo_telegram_base import try_except, dao
 from app_logger import logger
 from flask_login import login_required, current_user
+import json
+from datetime import timedelta
 
 
 dashboard_view = Blueprint("dashboard_view", __name__)
 
 
-@dashboard_view.route('/dashboard')
+@dashboard_view.route('/dashboard',  methods=['POST', 'GET'])
 @try_except
 @login_required
 def dashboard():
@@ -35,6 +37,16 @@ def dashboard():
 
             attendants_text = event['attendants'].replace('\r\n', '||')
             event['attendants'] = attendants_text
+
+    # if request.get == reload 면 json으로 response 보내기
+    if request.method == 'POST':
+        # events 돌면서 time 들어가는 속성들 문자열로 바꿔주기
+
+        for event in events:
+            for key, value in event.items():
+                if type(value) is timedelta:
+                    event[key] = unicode(str(value), 'utf-8')
+        return jsonify(result=events)
 
     return render_template('dashboard.html', events=events)
 

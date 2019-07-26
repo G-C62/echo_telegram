@@ -262,7 +262,7 @@
 						var ele_lef =  0;
 
 						ele_next.css({
-							"top": ele_hei + "px",
+							"top": ele_hei + 55 + "px",
 							"left": ele_lef + "px"
 						});
 						open_timepicki();

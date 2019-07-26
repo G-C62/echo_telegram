@@ -80,28 +80,106 @@
     }
 </style>
 <script>
-    setTimeout("location.reload()",60000);
-
-    //javascript에 객체 추가
     eventsArray = new Array();
-    {% for event in events if events %}
-    var eventInfo = new Object();
-    eventInfo.user_id = '{{ event["user_id"] }}';
-    eventInfo.rank = '{{ event["rank"] }}';
-    eventInfo.status = '{{ event["status"] }}';
-    eventInfo.name = '{{ event["name"] }}';
-    eventInfo.location = '{{ event["seat_location"] }}';
-    eventInfo.category = '{{ event["category"] }}';
-    eventInfo.place = '{{ event["place"] }}';
-    eventInfo.subject = '{{ event["subject"] }}';
-    eventInfo.start_time = '{{ event["start_time"] }}';
-    eventInfo.attendants = '{{ event["attendants"] }}';
-    eventInfo.attendants = eventInfo.attendants.replace('||', '<br>');
 
-    eventsArray.push(eventInfo);
-    {% endfor %}
+
+
+
+
+
 
     $(function(){
+        function update_user_box(){
+          // 유저status
+
+          for(var i = 0; i < eventsArray.length ; i++ ){
+            eventInfo = eventsArray[i];
+            console.log(eventInfo);
+            var className;
+            var status_kor;
+
+            switch (eventInfo.status) {
+              case 'place':
+              case 'None':
+                className = 'place-box';
+                status_kor = '자리에 있음';
+                break;
+              case 'meeting':
+                status_kor = '회의';
+                className = 'empty-box';
+                break;
+              case 'away':
+                status_kor = '자리비움';
+                className = 'empty-box';
+                break;
+              case 'outside':
+                status_kor = '외근';
+                className = 'empty-box';
+                break;
+              default:
+                className = 'place-box';
+                status_kor = '자리에 있음';
+                break;
+            }
+
+            if(eventInfo.location !== 'None'){
+                var location_to_id = '#' + eventInfo.location;
+                user_location_dom = $(location_to_id);
+                user_location_dom.addClass(className);
+                user_location_dom.children('.user-status').text(status_kor);
+                user_location_dom.find('div.user-name').text(eventInfo.name);
+                user_location_dom.find('div.user-rank').text(eventInfo.rank);
+            }
+          }
+
+        }
+
+        setInterval(function()
+    {
+        $.ajax({
+        	url         : '{{ url_for("dashboard_view.dashboard") }}'
+           ,type        : 'POST'
+           ,cache       : false
+           ,contentType : 'application/json; charset=utf-8'
+           ,dataType    : 'json'
+           ,success     : function(data) {
+               eventsArray = [];
+               for(var i = 0; i < data.result.length ; i++){
+                  eventsArray.push(data.result[i]);
+               }
+               update_user_box();
+        	  }
+           ,error: function(result) {
+        	   alert('통신에 오류가 발생했습니다. 자동으로 최신화 되지 못했습니다. 강제로 새로고침합니다.');
+             location.reload();
+           }
+        });
+    },6000);
+
+
+        //javascript에 객체 초기값 입력
+
+        {% for event in events if events %}
+        var eventInfo = new Object();
+        eventInfo.user_id = '{{ event["user_id"] }}';
+        eventInfo.rank = '{{ event["rank"] }}';
+        eventInfo.status = '{{ event["status"] }}';
+        eventInfo.name = '{{ event["name"] }}';
+        eventInfo.location = '{{ event["seat_location"] }}';
+        eventInfo.category = '{{ event["category"] }}';
+        eventInfo.place = '{{ event["place"] }}';
+        eventInfo.subject = '{{ event["subject"] }}';
+        eventInfo.start_time = '{{ event["start_time"] }}';
+        eventInfo.attendants = '{{ event["attendants"] }}';
+        eventInfo.attendants = eventInfo.attendants.replace('||', '<br>');
+
+        eventsArray.push(eventInfo);
+        {% endfor %}
+
+        update_user_box();
+
+
+        //별개
         var user_location = '';
         //dialog 생성
         infoDialog = document.querySelector('#info-dialog');
@@ -116,6 +194,8 @@
             });
         }
 
+
+        //완전 별개
         //그리드 클릭 이벤트
         $('.row > .col').on('click', function(){
             click_location = $(this).attr('id');
@@ -123,7 +203,6 @@
             user_location = '{{ current_user.location }}';
             if(click_status != ''){
                 //디테일 이벤트
-                console.log(click_status)
                 if(click_status == '자리에 있음'){
                     alert('자리에 잘 계십니다 ^^7');
                 }
@@ -194,48 +273,8 @@
         });
 
         //events, user 정보 읽어오기
-        {% for event in events if events %}
-        // 유저좌표
-        user_location_id = '{{ event['seat_location'] }}';
 
-        // 유저status
-        var className;
-        var status_kor;
-        user_status = '{{ event["status"] }}'
-        switch (user_status) {
-          case 'place':
-          case 'None':
-            className = 'place-box';
-            status_kor = '자리에 있음';
-            break;
-          case 'meeting':
-            status_kor = '회의';
-            className = 'empty-box';
-            break;
-          case 'away':
-            status_kor = '자리비움';
-            className = 'empty-box';
-            break;
-          case 'outside':
-            status_kor = '외근';
-            className = 'empty-box';
-            break;
-          default:
-            className = 'place-box';
-            status_kor = '자리에 있음';
-            break;
-        }
 
-        if(user_location_id !== 'None'){
-            user_location_id = '#' + user_location_id;
-            user_location_dom = $(user_location_id);
-            user_location_dom.addClass(className);
-            user_location_dom.children('.user-status').text(status_kor);
-            user_location_dom.find('div.user-name').text('{{ event["name"] }}');
-            user_location_dom.find('div.user-rank').text('{{ event["rank"] }}');
-        }
-
-        {% endfor %}
 
 
 
