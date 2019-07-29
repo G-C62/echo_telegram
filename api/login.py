@@ -2,7 +2,7 @@
 
 
 from flask.blueprints import Blueprint
-from flask import url_for, redirect
+from flask import url_for, redirect, flash
 from werkzeug.security import check_password_hash
 from flask.globals import request, g
 from echo_telegram_base import try_except, dao, app
@@ -45,6 +45,7 @@ def login():
             return redirect(url_for('dashboard_view.dashboard'))
 
     #로그인에 실패함
+    flash(u'입력정보를 다시 확인해주세요');
     return redirect(url_for('main_view.index'))
 
 

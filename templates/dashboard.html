@@ -167,6 +167,7 @@
 
         {% for event in events if events %}
         var eventInfo = new Object();
+        eventInfo.id = '{{ event["id"] }}'
         eventInfo.user_id = '{{ event["user_id"] }}';
         eventInfo.rank = '{{ event["rank"] }}';
         eventInfo.status = '{{ event["status"] }}';
@@ -195,8 +196,13 @@
         if(addChannelButton){
             addChannelButton.addEventListener('click',function(event){
                 channel_id = prompt('등록을 원하는 채팅 채널 ID를 입력해주세요');
-                register_url = '{{ url_for("register_channel_api.register_channel") }}' + '?channel=' + channel_id;
-                location.href = register_url;
+                if(channel_id.trim() !== ''){
+                  register_url = '{{ url_for("register_channel_api.register_channel") }}' + '?channel=' + channel_id.trim();
+                  location.href = register_url;
+                }
+                else{
+                  alert('입력정보를 확인해주세요');
+                }
             });
         }
 

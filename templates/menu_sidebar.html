@@ -96,6 +96,19 @@
                     }
                 {% endif %}
 
+                //현재유저의 event객체 추출
+                var eventElement = eventsArray.filter(function(item){
+                  return item.user_id === '{{ current_user.userId }}';
+                });
+
+                console.log(eventElement);
+                console.log(eventElement[0].category);
+                //현재 상태는 None이지만 event가 생성된 경우
+                if(eventElement[0].category !== null && eventElement[0].category !== 'None' && !$(this).hasClass('notice')){
+                  alert('이미 등록된 이벤트가 존재합니다.');
+                  return;
+                }
+
                 //display 초기화
                 $('#events-dialog-content > form > div:nth-child(2)').css('display', 'inline-flex');
                 $('#events-dialog-content > form > div:nth-child(3)').css('display', 'inline-flex');
@@ -137,9 +150,11 @@
         //timepicker
         $('#timepicker').timepicki();
 
+
         //이벤트 제출
-        $('#event-submit').on('click',function(){
+        $('#event-submit').on('click',function(e){
             $('#event-dialog form').submit();
+            eventDialogMDC.close();
         });
 
         //eventTextFields[2].on

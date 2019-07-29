@@ -20,7 +20,7 @@ def dashboard():
     # 현재 사용자의 이벤트들을 select 해서 가져온 다음 넘겨줌
     cursor = dao.get_conn().cursor()
     cursor.execute('''
-                    select users.user_id,rank, status, name, seat_location, events.user_id, category, place, 
+                    select users.user_id ,rank, status, name, seat_location, users.id, category, place, 
                     subject, start_time, attendants, channel_name, iscomplete
                     from users left join channels
                     on users.channel_id = channels.id
