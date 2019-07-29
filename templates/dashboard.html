@@ -82,19 +82,21 @@
 <script>
     eventsArray = new Array();
 
-
-
-
-
-
-
     $(function(){
         function update_user_box(){
+          //box데이터들 초기화 필요
+            $('.row > div').each(function(index, item){
+              $(item).attr('class', 'col');
+              $(item).children('.user-status').text('');
+              $(item).find('div.user-name').text('');
+              $(item).find('div.user-rank').text('');
+            });
+
           // 유저status
 
           for(var i = 0; i < eventsArray.length ; i++ ){
             eventInfo = eventsArray[i];
-            console.log(eventInfo);
+
             var className;
             var status_kor;
 
@@ -122,39 +124,43 @@
                 break;
             }
 
-            if(eventInfo.location !== 'None'){
-                var location_to_id = '#' + eventInfo.location;
+
+
+
+            if(eventInfo.seat_location !== 'None'){
+                var location_to_id = '#' + eventInfo.seat_location;
                 user_location_dom = $(location_to_id);
                 user_location_dom.addClass(className);
                 user_location_dom.children('.user-status').text(status_kor);
                 user_location_dom.find('div.user-name').text(eventInfo.name);
                 user_location_dom.find('div.user-rank').text(eventInfo.rank);
             }
+
           }
 
         }
 
         setInterval(function()
-    {
-        $.ajax({
-        	url         : '{{ url_for("dashboard_view.dashboard") }}'
-           ,type        : 'POST'
-           ,cache       : false
-           ,contentType : 'application/json; charset=utf-8'
-           ,dataType    : 'json'
-           ,success     : function(data) {
-               eventsArray = [];
-               for(var i = 0; i < data.result.length ; i++){
-                  eventsArray.push(data.result[i]);
+          {
+            $.ajax({
+              url         : '{{ url_for("dashboard_view.dashboard") }}'
+               ,type        : 'POST'
+               ,cache       : false
+               ,contentType : 'application/json; charset=utf-8'
+               ,dataType    : 'json'
+               ,success     : function(data) {
+                   eventsArray = [];
+                   for(var i = 0; i < data.result.length ; i++){
+                      eventsArray.push(data.result[i]);
+                   }
+                   update_user_box();
+                }
+               ,error: function(result) {
+                 alert('통신에 오류가 발생했습니다. 자동으로 최신화 되지 못했습니다. 강제로 새로고침합니다.');
+                 location.reload();
                }
-               update_user_box();
-        	  }
-           ,error: function(result) {
-        	   alert('통신에 오류가 발생했습니다. 자동으로 최신화 되지 못했습니다. 강제로 새로고침합니다.');
-             location.reload();
-           }
-        });
-    },6000);
+            });
+          },60000);
 
 
         //javascript에 객체 초기값 입력
@@ -165,7 +171,7 @@
         eventInfo.rank = '{{ event["rank"] }}';
         eventInfo.status = '{{ event["status"] }}';
         eventInfo.name = '{{ event["name"] }}';
-        eventInfo.location = '{{ event["seat_location"] }}';
+        eventInfo.seat_location = '{{ event["seat_location"] }}';
         eventInfo.category = '{{ event["category"] }}';
         eventInfo.place = '{{ event["place"] }}';
         eventInfo.subject = '{{ event["subject"] }}';
@@ -209,7 +215,7 @@
                 else{
                     // 이벤트를 돌면서 해당 이벤트의 좌표와 클릭된 이벤의 좌표가 같을 경우 상태 출력
                     for(var index in eventsArray){
-                        if(eventsArray[index].location === click_location){
+                        if(eventsArray[index].seat_location === click_location){
                             info_status = eventsArray[index].status == 'meeting' ? '회의'
                                 : (eventsArray[index].status == 'away'? '자리비움' : '외근' )
                             info_name = eventsArray[index].name
