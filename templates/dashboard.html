@@ -126,7 +126,7 @@
 
 
 
-
+            //좌석 box 스타일 및 텍스트 업데이트
             if(eventInfo.seat_location !== 'None'){
                 var location_to_id = '#' + eventInfo.seat_location;
                 user_location_dom = $(location_to_id);
@@ -135,6 +135,21 @@
                 user_location_dom.find('div.user-name').text(eventInfo.name);
                 user_location_dom.find('div.user-rank').text(eventInfo.rank);
             }
+
+            //좌석으로 돌아오기 버튼 업데이트
+
+            if(eventInfo.user_id === '{{ current_user.userId }}' && eventInfo.seat_location !== null && eventInfo.seat_location !== 'None'){
+                if(eventInfo.status !== 'place'){
+                    $('#place-button').css('display', 'block');
+                    $('#return-button').text('자리로 돌아오기');
+                }
+                else{
+                    $('#place-button').css('display', 'none');
+                }
+
+            }
+
+
 
           }
 

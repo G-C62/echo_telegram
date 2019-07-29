@@ -45,6 +45,9 @@
     textarea[name='event_attendants']{
         height: 200px !important;
     }
+    #place-button{
+        display: none;
+    }
 </style>
 <script>
     //flash 메시지 alert발생
@@ -101,8 +104,6 @@
                   return item.user_id === '{{ current_user.userId }}';
                 });
 
-                console.log(eventElement);
-                console.log(eventElement[0].category);
                 //현재 상태는 None이지만 event가 생성된 경우
                 if(eventElement[0].category !== null && eventElement[0].category !== 'None' && !$(this).hasClass('notice')){
                   alert('이미 등록된 이벤트가 존재합니다.');
@@ -157,9 +158,11 @@
             eventDialogMDC.close();
         });
 
-        //eventTextFields[2].on
-        //notch
-
+        returnButton = document.querySelector('#return-button');
+                        returnButtonRipple = new MDCRipple(returnButton);
+                        returnButton.addEventListener('click',function(event){
+                            location.href = '{{ url_for("user_api.return_seat") }}';
+                         });
 
     })
 </script>
@@ -186,20 +189,10 @@
                 <li class="list-contents notice">
                     공지
                 </li>
-                {% if current_user.status != None and current_user.status != 'place' %}
-                <script>
-                    $(function(){
-                        returnButton = document.querySelector('#return-button');
-                        returnButtonRipple = new MDCRipple(returnButton);
-                        returnButton.addEventListener('click',function(event){
-                            location.href = '{{ url_for("user_api.return_seat") }}';
-                         });
-                    })
-                </script>
+
                 <li id="place-button">
                     <button id="return-button"class="mdc-button mdc-button--outlined">자리로 돌아오기</button>
                 </li>
-                {% endif %}
 
             {% endif %}
         </ul>
