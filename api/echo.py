@@ -40,6 +40,8 @@ def create_event():
     start =  request.form['event_start'].encode("utf-8") if 'event_start' in request.form else ''
     query = ''
 
+    print attendants.replace(' ', '')
+
     # status가 존재하는데 또 생성하려는 경우 방지
     if current_user.status != 'place' and current_user.status is not None and category != 'notice':
         flash('자리에 돌아온 후 다시 시도해주세요')
@@ -97,7 +99,7 @@ def create_event():
     # 1. 현재시간보다 이전 시간인 경우
     now = datetime.datetime.now()
     start_datetime = now.replace(hour=int(start[0:2]), minute=int(start[3:5]))
-    if now > start_datetime:
+    if now >= start_datetime:
         if category == 'meeting':
             # 공백 또는 , 로 분할하여 리스트로만듦
             attendants_list = attendants.replace(' ', '').split(',') if ',' in attendants else attendants.split(' ')

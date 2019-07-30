@@ -154,6 +154,16 @@
 
         //이벤트 제출
         $('#event-submit').on('click',function(e){
+            //줄바꿈 문자 띄어쓰기로 바꾸어서 서버에 보냄
+            var str = $('#events-dialog-content textarea').val();
+            $('#events-dialog-content textarea').val(str.split('\n').join(' '));
+
+            //시간을 입력하지 않으면 보내지지않음
+            if(!($('#timepicker').is('[data-timepicki-tim]'))){
+               alert('시작시간은 필수 입력사항 입니다.');
+               return;
+            }
+
             $('#event-dialog form').submit();
             eventDialogMDC.close();
         });
@@ -162,7 +172,7 @@
                         returnButtonRipple = new MDCRipple(returnButton);
                         returnButton.addEventListener('click',function(event){
                             location.href = '{{ url_for("user_api.return_seat") }}';
-                         });
+          });
 
     })
 </script>
